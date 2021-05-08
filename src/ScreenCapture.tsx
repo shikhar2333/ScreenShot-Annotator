@@ -28,7 +28,7 @@ const ScreenCapture: React.FC<ScreenShotProps> = ( ({children, ...props}: Screen
   } = props;
 
   const [on, setOn] = useState<boolean>(false);
-  const [escape, setEscape] = useState<boolean>(false);
+  // const [escape, setEscape] = useState<boolean>(false);
   const [isMouseDown, setIsMouseDown] = useState<boolean>(false);
   const [imageCoord, setImageCoord] = useState<ImageCoordinates>({startX:0, startY:0});
   // const [imageURL, setImageURL] = useState<string>('');
@@ -67,40 +67,18 @@ const ScreenCapture: React.FC<ScreenShotProps> = ( ({children, ...props}: Screen
     const endY = e.clientY;
     const cropPositionTop = endY >=startY ? startY : endY;
     const cropPositionLeft = endX >= startX ? startX : endX;
-    
-    const isStartTop = endY >= startY;
-    const isStartBottom = endY <= startY;
-    const isStartLeft = endX >= startX;
-    const isStartRight = endX <= startX;
-    const isStartTopLeft = isStartTop && isStartLeft;
-    const isStartTopRight = isStartTop && isStartRight;
-    const isStartBottomLeft = isStartBottom && isStartLeft;
-    const isStartBottomRight = isStartBottom && isStartRight;
+  
     let newBorderWidth = borderWidth.borderWidth;
     const abs = require('math-abs');
     const cropWidth = abs(startX - endX)*window.devicePixelRatio;
     const cropHeight = abs(startY - endY)*window.devicePixelRatio;
+    const borderTop = endY >= startY ? startY : endY;
+    const borderRight = endX >= startX ? (windowWidth - endX) : (windowWidth - startX);
+    const borderBottom = endY >= startY ? (windowHeight - endY) : (windowHeight - startY);
+    const borderLeft  = endX >= startX ? startX : endX;
 
     if (isMouseDown) {
-      if (isStartTopLeft) {
-        newBorderWidth = `${startY}px ${windowWidth - endX}px ${windowHeight -
-          endY}px ${startX}px`;
-      }
-
-      if (isStartTopRight) {
-        newBorderWidth = `${startY}px ${windowWidth - startX}px ${windowHeight -
-          endY}px ${endX}px`;
-      }
-
-      if (isStartBottomLeft) {
-        newBorderWidth = `${endY}px ${windowWidth - endX}px ${windowHeight -
-          startY}px ${startX}px`;
-      }
-
-      if (isStartBottomRight) {
-        newBorderWidth = `${endY}px ${windowWidth - startX}px ${windowHeight -
-          startY}px ${endX}px`;
-      }
+      newBorderWidth = `${borderTop}px ${borderRight}px ${borderBottom}px ${borderLeft}px`;
     }
     
     setCropState({

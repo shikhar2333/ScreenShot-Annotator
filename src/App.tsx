@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-// import logo from './logo.svg';
 import './App.css';
 import ScreenCapture  from './ScreenCapture';
 import FullScreenCapture from './FullScreenCapture';
@@ -37,7 +36,7 @@ function App() {
   // console.log(screenCapture);
   return (
     <div>
-      {/* <ScreenCapture onEndCapture={handleScreenCapture}>
+      <ScreenCapture onEndCapture={handleScreenCapture}>
       {(props: StartCapture ) => (
           <div>
               <button onClick={props.onStartCapture}>Capture</button>
@@ -51,7 +50,7 @@ function App() {
              </div>
           </div>
       )}
-    </ScreenCapture> */}
+    </ScreenCapture>
     <FullScreenCapture onEndCapture={handleScreenCapture}>
       {(props: StartCapture ) => (
           <div>
@@ -61,7 +60,7 @@ function App() {
               <RandomText/>
               <div>
                   <p>
-                    {screenCapture && <button onClick={handleSave}>Download</button>}
+                    {screenCapture && <button onClick={handleSave}> Full Download</button>}
                   </p>
              </div>
           </div>
