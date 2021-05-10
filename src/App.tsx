@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import './App.css';
 import ScreenCapture  from './ScreenCapture';
 import FullScreenCapture from './FullScreenCapture';
+import copyImg from './clipBoard';
 
 interface StartCapture {
   onStartCapture: () => void;
@@ -34,6 +35,16 @@ function App() {
     downloadLink.click();
   };
   // console.log(screenCapture);
+  const copyToClipBoard = useCallback( async() => {
+    try{
+      await copyImg(screenCapture)
+    }catch(error){
+      console.error(error);
+    }
+  }, [screenCapture]);
+  const imgCopy = () => {
+    copyToClipBoard();
+  }
   return (
     <div>
       <ScreenCapture onEndCapture={handleScreenCapture}>
@@ -48,13 +59,16 @@ function App() {
                     {screenCapture && <button onClick={handleSave}>Download</button>}
                   </p>
              </div>
+             {/* <img id="copy" src={screenCapture} alt='react-screen-capture' /> */}
           </div>
       )}
     </ScreenCapture>
-    <FullScreenCapture onEndCapture={handleScreenCapture}>
+    <button onClick={imgCopy}>Copy to Clipboard</button>
+    {/* <FullScreenCapture onEndCapture={handleScreenCapture}>
       {(props: StartCapture ) => (
           <div>
               <button onClick={props.onStartCapture}>Full Screen Capture</button>
+              <button onClick={imgCopy}>Copy to Clipboard</button>
               <RandomText/>
               <RandomText/>
               <RandomText/>
@@ -65,7 +79,7 @@ function App() {
              </div>
           </div>
       )}
-    </FullScreenCapture>
+    </FullScreenCapture> */}
     </div>
   );
 }

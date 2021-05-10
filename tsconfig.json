@@ -18,9 +18,35 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/@types"
+    ],
     "jsx": "react-jsx"
   },
   "include": [
     "src"
   ]
 }
+// {
+//   "compilerOptions": {
+//     "target": "es5",
+//     "module": "commonjs",
+//     "lib": ["es2017", "es7", "es6", "dom"],
+//     "declaration": true,
+//     "declarationMap": true,
+//     "sourceMap": true,
+//     "outDir": "./dist",
+//     "rootDir": "./src",
+//     "removeComments": true,
+//     "typeRoots": [
+//       "./node_modules/@types",
+//       "./src/@types"
+//     ],
+//     "strict": true,
+//     "esModuleInterop": true,
+//     "forceConsistentCasingInFileNames": true
+//   },
+//   "exclude": ["node_modules", "demo"],
+//   "include": ["src"]
+// }

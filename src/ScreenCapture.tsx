@@ -1,6 +1,7 @@
 import React, {CSSProperties, ReactNode, useEffect, useState } from 'react';
 import './styles.scss';
-import { drawCanvas, Window } from './ScreenShotUtils';
+import 'math-abs';
+import { drawCanvas, CropProps, Window } from './ScreenShotUtils';
 
 interface ImageCoordinates {
   startX: number;
@@ -33,6 +34,7 @@ const ScreenCapture: React.FC<ScreenShotProps> = ( ({children, ...props}: Screen
   // const [imageURL, setImageURL] = useState<string>('');
   const [windowState, setWindowState] = useState<Window>({windowWidth:0, windowHeight: 0});
   const [borderWidth, setBorderWidth] = useState<BorderWidth>({borderWidth: 0});
+  const [cropState, setCropState] = useState<CropProps>({cropPositionTop: 0, cropPositionLeft: 0, cropWidth: 0, cropHeight: 0});
   const [crossHair, setCrossHair] = useState<CrossHair>({crossHairsLeft: 0, crossHairsTop: 0});
 
   const handleWindowResize = () => {
@@ -63,8 +65,13 @@ const ScreenCapture: React.FC<ScreenShotProps> = ( ({children, ...props}: Screen
     const { startX, startY } = imageCoord;
     const endX = e.clientX;
     const endY = e.clientY;
+    const cropPositionTop = endY >=startY ? startY : endY;
+    const cropPositionLeft = endX >= startX ? startX : endX;
   
     let newBorderWidth = borderWidth.borderWidth;
+    const abs = require('math-abs');
+    const cropWidth = abs(startX - endX)*window.devicePixelRatio;
+    const cropHeight = abs(startY - endY)*window.devicePixelRatio;
     const borderTop = endY >= startY ? startY : endY;
     const borderRight = endX >= startX ? (windowWidth - endX) : (windowWidth - startX);
     const borderBottom = endY >= startY ? (windowHeight - endY) : (windowHeight - startY);
@@ -73,7 +80,13 @@ const ScreenCapture: React.FC<ScreenShotProps> = ( ({children, ...props}: Screen
     if (isMouseDown) {
       newBorderWidth = `${borderTop}px ${borderRight}px ${borderBottom}px ${borderLeft}px`;
     }
-  
+    
+    setCropState({
+      cropPositionTop: cropPositionTop,
+      cropPositionLeft: cropPositionLeft,
+      cropWidth: cropWidth,
+      cropHeight: cropHeight,
+    })
     setBorderWidth({
       borderWidth: newBorderWidth
     });
@@ -89,6 +102,13 @@ const ScreenCapture: React.FC<ScreenShotProps> = ( ({children, ...props}: Screen
     setImageCoord({
       startX: startX,
       startY: startY
+    });
+    const prevCropState = cropState;
+    setCropState({
+      cropPositionTop: startY,
+      cropPositionLeft: startX,
+      cropWidth: prevCropState.cropWidth,
+      cropHeight: prevCropState.cropHeight
     });
     setIsMouseDown(true);
     const { windowWidth, windowHeight } = windowState;
@@ -110,7 +130,7 @@ const ScreenCapture: React.FC<ScreenShotProps> = ( ({children, ...props}: Screen
     const CaptureFunction  = {
       onEndCapture: onEndCapture
     };
-    drawCanvas(CaptureFunction);
+    drawCanvas(cropState, CaptureFunction);
 
     setCrossHair({
       crossHairsTop: 0,
