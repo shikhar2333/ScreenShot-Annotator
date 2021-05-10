@@ -1,11 +1,13 @@
-import html2canvas from 'html2canvas';
+// import html2canvas from 'html2canvas';
+import * as htmlToImage from 'html-to-image';
 
-export interface CropProps {
-    cropPositionTop: number;
-    cropPositionLeft: number;
-    cropWidth: number;
-    cropHeight: number;
-}
+// export interface CropProps {
+//     cropPositionTop: number;
+//     cropPositionLeft: number;
+//     cropWidth: number;
+//     cropHeight: number;
+// }
+
 export interface EndCapture {
     onEndCapture: (url: string) => void;
 }
@@ -15,41 +17,19 @@ export interface Window {
     windowHeight: number;
 }
 
-export const drawCanvas = (cropState: CropProps, CaptureFunction: EndCapture) => {
-    const {
-      cropPositionTop,
-      cropPositionLeft,
-      cropWidth,
-      cropHeight,
-    } = cropState;
+export const drawCanvas = async(CaptureFunction: EndCapture) => {
     const { onEndCapture } = CaptureFunction;
     const body = document.querySelector('body');
-
-    if (body) {
-      html2canvas(body).then(canvas => {
-        const croppedCanvas = document.createElement('canvas');
-        const croppedCanvasContext = croppedCanvas.getContext('2d');
-
-        croppedCanvas.width = cropWidth;
-        croppedCanvas.height = cropHeight;
-        
-        if (croppedCanvasContext) {
-          croppedCanvasContext.drawImage(
-            canvas,
-            cropPositionLeft,
-            cropPositionTop,
-            cropWidth,
-            cropHeight,
-            0,
-            0,
-            cropWidth,
-            cropHeight,
-          );
-        }
-        
-        if (croppedCanvas) {
-          onEndCapture(croppedCanvas.toDataURL());
-        }
-      });
+    if (body){
+      try { 
+        /* get image src url through html-to-image library */
+        const pngImageUrl = await htmlToImage.toPng(body, {backgroundColor: 'white'});
+        console.log("PNG url is: ", pngImageUrl);
+        if(pngImageUrl){
+          onEndCapture(pngImageUrl);
+        }    
+      } catch(error){
+        console.log("Error drawing : ", error);
+      }
     }
 };
